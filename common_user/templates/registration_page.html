@@ -1,11 +1,20 @@
 {% extends 'base.html'%}
-{% block title%}
-LogIn
-{% endblock %}
+{% block title%}Registration{% endblock %}
 {% block content %}
 <div class="container">
     <div class="jumbotron">
-        <h1>Welcome to the Registration page!</h1>
+        {% if register %}
+            <h1>Thank you for Registration!</h1>
+        {% else %}
+            <h1>Welcome to the Registration page!</h1>
+            <h2>Please, fill the next form out:</h2>
+            <form method="POST", enctype="multipart/form-data">
+                {% csrf_token %}
+                {{form_default_user.as_p}}
+                {{form_common_user.as_p}}
+                <input type="submit" class="btn btn-primary" value="Register">
+            </form>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

@@ -8,7 +8,7 @@ class CommonUser(models.Model):
     profile = models.ImageField(verbose_name='Profile Photo',
                                 upload_to='user_profile',
                                 default='default_profile.png')
-    about = models.CharField(max_length=512, blank=True)
+    about = models.TextField(max_length=512, blank=True)
     registration_date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
