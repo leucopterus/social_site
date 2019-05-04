@@ -16,8 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from common_user import urls as user_urls
+# next two lines are to download and show media files (companies logo, etc) on HTML files:
+# allow us to say where static is and where media is
+from django.conf.urls.static import static
+from django.conf import settings  # everything that is defined in setting.py file
 
 urlpatterns = [
     path('', include(user_urls, namespace='for_users')),
     path('admin/', admin.site.urls),
 ]
+# this line is for displaying media files:
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

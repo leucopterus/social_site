@@ -5,9 +5,9 @@ from django.contrib.auth.models import User
 
 class CommonUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    profile = models.ImageField(verbose_name='Profile Photo',
+    profile = models.ImageField(verbose_name='Profile',
                                 upload_to='user_profile',
-                                default='default_profile.png')
+                                default='user_profile/default_profile.png')
     about = models.TextField(max_length=512, blank=True)
     registration_date = models.DateTimeField(auto_now=True)
 

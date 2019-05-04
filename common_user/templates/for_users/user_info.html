@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title%}user info{% endblock %}
+{% block content %}
+    <div class="container">
+        <p>Welcome, {{ common_user_detail.user.first_name }} {{ common_user_detail.user.last_name }}</p>
+        <div class="jumbotron">
+            <p><img src="{{ common_user_detail.profile.url }}"></p>
+            <p>{{ common_user_detail.about}}</p>
+        </div>
+    </div>
+{% endblock %}

@@ -1,7 +1,11 @@
-from django.shortcuts import render, reverse, HttpResponseRedirect
+from django.shortcuts import render, redirect, HttpResponseRedirect
+from django.urls import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
+from django.views.generic import (View, TemplateView, DetailView,
+                                  ListView, UpdateView, DeleteView)
+from .models import CommonUser
 from .forms import (UserLogInForm, UserRegistrationForm,
                     CommonUserRegistrationForm)
 # Create your views here.
@@ -24,11 +28,12 @@ def page_for_log_in(request):
         password = request.POST.get('password')
         username = User.objects.get(email=email).username
         user = authenticate(username=username, password=password)
+        common_user = CommonUser.objects.get(user=user)
 
         if user:
             if user.is_active:
                 login(request, user)
-                return HttpResponseRedirect(reverse('for_users:welcome'))
+                return redirect(reverse('for_users:user_home_page', kwargs={'pk': common_user.pk}))
         else:
             return HttpResponseRedirect(reverse('for_users:login_page'))
 
@@ -51,6 +56,7 @@ def page_for_registeration(request):
     if request.method == 'POST':
         if user_form.is_valid and user_common_form.is_valid:
             user = user_form.save()
+            # hash password and save it on db
             user.set_password(user.password)
             user.save()
 
@@ -72,3 +78,20 @@ def page_for_registeration(request):
         'register': registered,
     }
     return render(request, 'registration_page.html', context)
+
+
+class CommonUserDetailView(DetailView):
+    context_object_name = 'common_user_detail'
+    model = CommonUser
+    template_name = 'for_users/user_info.html'
+
+
+class CommonUserUpdateView(UpdateView):
+    fields = ('user.last_name', 'user.first_name', 'user.email', 'user.password',
+              'profile', 'about')
+    model = CommonUser
+
+
+class CommonUserDeleteView(DeleteView):
+    model = CommonUser
+    success_url = reverse_lazy('for_users:welcome')
