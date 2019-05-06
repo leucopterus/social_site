@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container">
+        <p>Some text</p>
+        <h1>Post #{{ post_number }}</h1>
+        <p>Text: {{ post_details.text }}</p>
+        <p>Created by: <a href="{% url 'for_users:user_home_page' pk=post_details.author.pk %}">@{{ post_details.author }}</a></p>
+        <p>{{ post_details.create_data|date:'d-m-Y' }} {{ post_details.create_data|time:'H:i' }}</p>
+    </div>
+{% endblock %}

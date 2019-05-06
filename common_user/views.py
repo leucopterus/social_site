@@ -1,7 +1,9 @@
-from django.shortcuts import render, redirect, HttpResponseRedirect
+from django.shortcuts import (render, redirect, HttpResponseRedirect,
+                              get_object_or_404)
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.views.generic import (View, TemplateView, DetailView,
                                   ListView, UpdateView, DeleteView)
@@ -12,6 +14,10 @@ from .forms import (UserLogInForm, UserRegistrationForm,
 
 
 def welcome_page(request):
+    if request.user.is_authenticated:
+        return redirect(reverse('for_users:user_home_page',
+                                kwargs={'pk': request.user.common_user.pk}))
+
     context = {}
     return render(request, 'welcome_page.html', context)
 
@@ -26,7 +32,10 @@ def page_for_log_in(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
-        username = User.objects.get(email=email).username
+        try:
+            username = User.objects.get(email=email).username
+        except User.DoesNotExist:
+            return HttpResponseRedirect(reverse('for_users:login_page'))
         user = authenticate(username=username, password=password)
         common_user = CommonUser.objects.get(user=user)
 
@@ -80,18 +89,26 @@ def page_for_registeration(request):
     return render(request, 'registration_page.html', context)
 
 
-class CommonUserDetailView(DetailView):
+class CommonUserDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'common_user_detail'
     model = CommonUser
     template_name = 'for_users/user_info.html'
 
+    def get_context_data(self, **kwargs):
+        # if in url we send pk, so we can grab it by accessing
+        # not request.pk but just only pk
+        context = super().get_context_data(**kwargs)
+        context['pk'] = self.kwargs['pk']
+        return context
 
-class CommonUserUpdateView(UpdateView):
-    fields = ('user.last_name', 'user.first_name', 'user.email', 'user.password',
-              'profile', 'about')
+
+class CommonUserUpdateView(LoginRequiredMixin, UpdateView):
+    fields = ('profile', 'about')
     model = CommonUser
+    template_name = 'for_users/commonuser_form.html'
 
 
-class CommonUserDeleteView(DeleteView):
+class CommonUserDeleteView(LoginRequiredMixin, DeleteView):
     model = CommonUser
+    template_name = 'for_users/commonuser_confirm_delete.html'
     success_url = reverse_lazy('for_users:welcome')

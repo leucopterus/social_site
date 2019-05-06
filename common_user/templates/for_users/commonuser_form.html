@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title%}user update{% endblock %}
+{% block content %}
+<div class="container">
+    <p>Do you want to change something?</p>
+    <div class="jumbotron">
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" class="btn btn-danger" value="Update">
+            <a href="{% url 'for_users:user_home_page' pk=user.common_user.pk %}" class='btn btn-primary'>Return back</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

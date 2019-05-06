@@ -4,8 +4,13 @@
     <div class="container">
         <p>Welcome, {{ common_user_detail.user.first_name }} {{ common_user_detail.user.last_name }}</p>
         <div class="jumbotron">
-            <p><img src="{{ common_user_detail.profile.url }}"></p>
+            <p><img src="{{ common_user_detail.profile.url }}" height="300" width="200"></p>
             <p>{{ common_user_detail.about}}</p>
         </div>
+        {% if request.user.common_user.pk == pk %}
+            <a href="{% url 'for_users:user_update_page' pk=user.common_user.pk %}" class='btn btn-warning'>Update</a>
+            <a href="{% url 'for_users:user_delete_page' pk=user.common_user.pk %}" class='btn btn-danger'>Delete</a>
+        {% endif %}
+        <p></p>
     </div>
 {% endblock %}
