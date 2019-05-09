@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container">
+        {% for post in post_list %}
+            <p>{{ post.text }}</p>
+            <p>comments: {{ post.comments_to_post.all.count }}</p>
+            <a href="{{ post.get_absolute_url }}" class='btn btn-primary'>Details</a>
+        {% endfor %}
+    </div>
+    <div class="container">
+        <br>
+        <a href="{% url 'posts:post_create_page' %}" class='btn btn-success'>Create new Post</a>
+        <p>User id {{ request.user.common_user.id }}</p>
+    </div>
+{% endblock %}

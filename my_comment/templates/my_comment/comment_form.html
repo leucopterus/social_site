@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <p>Comment Create</p>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="save btn btn-success">Save</button>
+        <a href="{% url 'posts:post_detail_page' pk=post_pk %}" class='btn btn-primary'>Go back</a>
+    </form>
+</div>
+<p>post pk: {{ post_pk }}</p>
+<p>user from request: {{ request.user }}</p>
+<p>common_user from request: {{ request.user.common_user }}</p>
+{% endblock %}

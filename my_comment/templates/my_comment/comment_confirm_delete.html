@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <p>Comment Delete</p>
+    <form method="POST">
+        {% csrf_token %}
+        <p>Are you sure you want to delete {{ object }}?</p>
+        <input type="submit" class="btn btn-danger" value="Confirm">
+        <a href="{{ object.get_absolute_url }}" class='btn btn-primary'>Go back</a>
+    </form>
+</div>
+<p>post pk from object: {{ object.pk }}</p>
+<p>post author from object: {{ object.author }}</p>
+<p>post text from object: {{ object.text }}</p>
+<p>user from request: {{ request.user }}</p>
+<p>common_user from request: {{ request.user.common_user }}</p>
+{% endblock %}

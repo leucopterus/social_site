@@ -37,7 +37,10 @@ def page_for_log_in(request):
         except User.DoesNotExist:
             return HttpResponseRedirect(reverse('for_users:login_page'))
         user = authenticate(username=username, password=password)
-        common_user = CommonUser.objects.get(user=user)
+        try:
+            common_user = CommonUser.objects.get(user=user)
+        except CommonUser.DoesNotExist:
+            return HttpResponseRedirect(reverse('for_users:login_page'))
 
         if user:
             if user.is_active:

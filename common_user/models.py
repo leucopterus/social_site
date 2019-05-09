@@ -5,7 +5,8 @@ from django.db import models
 
 
 class CommonUser(models.Model):
-    user = models.OneToOneField('auth.User', related_name='common_user',
+    user = models.OneToOneField('auth.User', unique=True,
+                                related_name='common_user',
                                 on_delete=models.CASCADE)
     profile = models.ImageField(upload_to='user_profile',
                                 default='user_profile/default_profile.png',
