@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from common_user.models import CommonUser
+from my_group.models import Group
 # Create your models here.
 
 
@@ -12,6 +13,11 @@ class Post(models.Model):
                                null=True,
                                on_delete=models.SET_NULL,
                                related_name='author')
+    group = models.ForeignKey(Group,
+                              null=True,
+                              default=None,
+                              on_delete=models.CASCADE,
+                              related_name='posts_in_group')
     text = models.TextField()
     create_data = models.DateTimeField(default=timezone.now)
 

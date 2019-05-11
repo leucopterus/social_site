@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container">
+        <!-- <p>You are logged in as: {{ request.user.common_user.pk }}</p> -->
+        {% if form.instance.pk %}
+            <p>Group Update</p>
+        {% else %}
+            <p>Group Create</p>
+        {% endif %}
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            {% if form.instance.pk %}
+                <button type="submit" class="save btn btn-success">Update</button>
+                <a href="{{ form.instance.get_detail_url }}" class="save btn btn-primary">Go back</a>
+            {% else %}
+                <button type="submit" class="save btn btn-success">Create</button>
+            {% endif %}
+        </form>
+    </div>
+    <p>group pk from object: {{ object.pk }}</p>
+    <p>user from request: {{ request.user }}</p>
+    <p>common_user from request: {{ request.user.common_user }}</p>
+{% endblock %}

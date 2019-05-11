@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container">
+        <p>Group Delete</p>
+        <form method="POST">
+            {% csrf_token %}
+            <p>Are you sure you want to delete Group <strong>{{ object.title }}</strong>?</p>
+            <input type="submit" class="btn btn-danger" value="Confirm">
+            <a href="{{ object.get_detail_url }}" class='btn btn-primary'>Go back</a>
+        </form>
+    </div>
+    <p>user from request: {{ request.user }}</p>
+    <p>common_user from request: {{ request.user.common_user }}</p>
+{% endblock %}

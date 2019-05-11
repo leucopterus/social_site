@@ -30,9 +30,15 @@ class PostCreateView(LoginRequiredMixin, generic.CreateView):
     fields = ('text',)
     model = Post
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['group_id'] = self.kwargs['group_id']
+        return context
+
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.author = self.request.user.common_user
+        self.object.posts_in_group = self.request.group_id
         self.object.save()
         return super().form_valid(form)
 

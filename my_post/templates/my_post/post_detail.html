@@ -5,8 +5,10 @@
         <p>Text: {{ post_details.text }}</p>
         <p>Created by: <a href="{% url 'for_users:user_home_page' pk=post_details.author.pk %}">@{{ post_details.author }}</a></p>
         <p>{{ post_details.create_data|date:'d-m-Y' }} {{ post_details.create_data|time:'H:i' }}</p>
-        <a href="{{ object.get_update_url }}" class='btn btn-warning'>Update</a>
-        <a href="{{ object.get_delete_url }}" class='btn btn-danger'>Delete</a>
+        {% if post_details.author == request.user.common_user %}
+            <a href="{{ object.get_update_url }}" class='btn btn-warning'>Update</a>
+            <a href="{{ object.get_delete_url }}" class='btn btn-danger'>Delete</a>
+        {% endif %}
         <a href="{% url 'comments:comment_create' post_pk=object.pk %}" class='btn btn-primary'>Add Comment</a>
         <div class="container">
             <p>Container for comments</p>
@@ -17,7 +19,9 @@
                             href="{% url 'for_users:user_home_page' pk=comment.comment_author.pk %}">@{{ comment.comment_author }}</a></p>
                 {% endif %}
                 <p>{{ comment.create_data|date:'d-m-Y' }} {{ comment.create_data|time:'H:i' }}</p>
-                <a href="{{ comment.get_delete_url }}" class="btn btn-danger">Delete comment</a>
+                {% if request.user.common_user == comment.comment_author %}
+                    <a href="{{ comment.get_delete_url }}" class="btn btn-danger">Delete comment</a>
+                {% endif %}
             {% endfor %}
         </div>
     </div>

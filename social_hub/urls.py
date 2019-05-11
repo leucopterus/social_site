@@ -15,17 +15,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-# next two lines are to download and show media files (companies logo, etc) on HTML files:
+# next two lines are written to download and show
+# media files (companies logo, etc) on HTML files:
 # allow us to say where static is and where media is
 from django.conf.urls.static import static
-from django.conf import settings  # everything that is defined in setting.py file
+# everything that is defined in setting.py file
+from django.conf import settings
 
 urlpatterns = [
     path('', include('common_user.urls', namespace='for_users')),
     path('post/', include('my_post.urls', namespace='posts')),
-    path('group/', include('my_group.urls', namespace='groups')),
     path('comment/', include('my_comment.urls', namespace='comments')),
+    path('group/', include('my_group.urls', namespace='groups')),
     path('admin/', admin.site.urls),
 ]
-# this line is for displaying media files:
+# this line is written to display media files:
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

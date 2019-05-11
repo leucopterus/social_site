@@ -7,6 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.views.generic import (View, TemplateView, DetailView,
                                   ListView, UpdateView, DeleteView)
+from django.views.generic.edit import DeletionMixin
 from .models import CommonUser
 from .forms import (UserLogInForm, UserRegistrationForm,
                     CommonUserRegistrationForm)
@@ -45,7 +46,8 @@ def page_for_log_in(request):
         if user:
             if user.is_active:
                 login(request, user)
-                return redirect(reverse('for_users:user_home_page', kwargs={'pk': common_user.pk}))
+                return redirect(reverse('for_users:user_home_page', 
+                                        kwargs={'pk': common_user.pk}))
         else:
             return HttpResponseRedirect(reverse('for_users:login_page'))
 
@@ -114,4 +116,10 @@ class CommonUserUpdateView(LoginRequiredMixin, UpdateView):
 class CommonUserDeleteView(LoginRequiredMixin, DeleteView):
     model = CommonUser
     template_name = 'for_users/commonuser_confirm_delete.html'
-    success_url = reverse_lazy('for_users:welcome')
+    # success_url = reverse_lazy('for_users:welcome')
+
+    def delete(self, request, **kwargs):
+        user_pk = request.user.pk
+        user = User.objects.get(pk=user_pk)
+        user.delete()
+        return redirect(reverse('for_users:welcome'))

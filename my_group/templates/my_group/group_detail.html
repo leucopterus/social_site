@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container">
+        <h1>{{ group_details.name }}</h1>
+        <img src="{{ group_details.logo.url }}" alt="group-logo" height="300" width="200">
+        <h2>{{ group_details.description }}</h2>
+        <p>Members: {{ group_details.members.all.count }}</p>
+        <p>Administrators: 
+            <li>{{ group_details.admins.all.count }}</li>
+        </p>
+        <p>Created by: 
+            <a href="{% url 'for_users:user_home_page' pk=group_details.creator.pk %}">@{{ group_details.creator }}</a> 
+            at: {{ group_details.create_data }}
+        </p>
+        {% if request.user.common_user == group_details.creator %}
+            <a href="{{ group_details.get_update_url }}" class='btn btn-warning'>Update group</a>
+            <a href="{{ group_details.get_delete_url }}" class='btn btn-danger'>Delete group</a>
+        {% endif %}
+        {% if request.user.common_user not in group_details.members.all %}
+            <a href="#" class='btn btn-primary'>Join group</a>
+        {% endif %}
+        <a class="btn btn-success" href="{% url 'posts:post_create_page' group_id=group_details.pk %}">Create a new post</a>
+        <p>group_id: {{group_details.pk}}</p>
+        {% for post in group_details.posts_in_group.all %}
+            <div class="container">
+                <p><a href="{{ post.get_absolute_url }}">{{ post.text|ljust:"10" }}</a></p>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
