@@ -11,7 +11,9 @@
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit" class="save btn btn-success">Save</button>
-            {% if form.instance.pk %}
+            {% if True %}
+                <a href="{{ object.get_group_url }}" class='btn btn-primary'>Go back</a>
+            {% elif form.instance.pk %}
                 <a href="{{ object.get_absolute_url }}" class='btn btn-primary'>Go back</a>
             {% else %}
                 <a href="{% url 'for_users:user_home_page' pk=request.user.common_user.pk %}" class='btn btn-primary'>Go back</a>
@@ -23,5 +25,7 @@
     <p>post text from object: {{ object.text }}</p>
     <p>user from request: {{ request.user }}</p>
     <p>common_user from request: {{ request.user.common_user }}</p>
-    <p>group id: {{ request.group_id }}</p>
+    <p>group id: {{ group_pk }}</p>
+    <p>group id: {{ request.group_pk }}</p>
+    <p>group id: {{ object.group_pk }}</p>
 {% endblock %}

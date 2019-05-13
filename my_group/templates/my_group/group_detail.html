@@ -4,9 +4,9 @@
         <h1>{{ group_details.name }}</h1>
         <img src="{{ group_details.logo.url }}" alt="group-logo" height="300" width="200">
         <h2>{{ group_details.description }}</h2>
-        <p>Members: {{ group_details.members.all.count }}</p>
+        <p>Members: {{ group_details.members.count }}</p>
         <p>Administrators: 
-            <li>{{ group_details.admins.all.count }}</li>
+            <li>{{ group_details.admins.count }}</li>
         </p>
         <p>Created by: 
             <a href="{% url 'for_users:user_home_page' pk=group_details.creator.pk %}">@{{ group_details.creator }}</a> 
@@ -17,9 +17,11 @@
             <a href="{{ group_details.get_delete_url }}" class='btn btn-danger'>Delete group</a>
         {% endif %}
         {% if request.user.common_user not in group_details.members.all %}
-            <a href="#" class='btn btn-primary'>Join group</a>
+            <a href="{% url 'groups:group_detail' pk=group_details.pk status='Join' %}" class='btn btn-primary'>Join group</a>
+        {% elif request.user.common_user != group_details.creator %}
+            <a href="{% url 'groups:group_detail' pk=group_details.pk status='Leave' %}" class='btn btn-primary'>Leave group</a>
         {% endif %}
-        <a class="btn btn-success" href="{% url 'posts:post_create_page' group_id=group_details.pk %}">Create a new post</a>
+        <a class="btn btn-success" href="{% url 'posts:post_create_page' group_pk=group_details.pk %}">Create a new post</a>
         <p>group_id: {{group_details.pk}}</p>
         {% for post in group_details.posts_in_group.all %}
             <div class="container">
@@ -27,4 +29,7 @@
             </div>
         {% endfor %}
     </div>
+    <p>common user: {{ user.common_user }}</p>
+    <p>common user from request: {{ request.user.common_user }}</p>
+    <p>group: {{ group_details.name }}</p>
 {% endblock %}

@@ -5,6 +5,12 @@
         <p>Text: {{ post_details.text }}</p>
         <p>Created by: <a href="{% url 'for_users:user_home_page' pk=post_details.author.pk %}">@{{ post_details.author }}</a></p>
         <p>{{ post_details.create_data|date:'d-m-Y' }} {{ post_details.create_data|time:'H:i' }}</p>
+        {% if post_details.group %}
+            <a href="{% url 'groups:group_detail' pk=post_details.group.pk %}" class='btn btn-success'>To group</a>
+        {% endif %}
+        {% if post_details.pk %}
+            <a href="{% url 'posts:post_list_page' %}" class='btn btn-success'>To post List</a>
+        {% endif %}
         {% if post_details.author == request.user.common_user %}
             <a href="{{ object.get_update_url }}" class='btn btn-warning'>Update</a>
             <a href="{{ object.get_delete_url }}" class='btn btn-danger'>Delete</a>
@@ -30,6 +36,7 @@
     <p>post pk from post_details: {{ post_details.pk }}</p>
     <p>post author from object: {{ object.author }}</p>
     <p>post text from object: {{ object.text }}</p>
+    <p>post group from object: {{ object.group }}</p>
     <p>number of comments to post from object: {{ object.comments_to_post.all.count }}</p>
     <p>user from request: {{ request.user }}</p>
     <p>common_user from request: {{ request.user.common_user }}</p>

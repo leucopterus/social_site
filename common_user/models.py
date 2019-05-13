@@ -13,6 +13,7 @@ class CommonUser(models.Model):
                                 verbose_name='Profile', blank=True)
     about = models.TextField(max_length=512, blank=True)
     registration_date = models.DateTimeField(auto_now=True)
+    # friends = models.ManyToManyField(CommonUser)
 
     def get_absolute_url(self):
         return reverse('for_users:user_home_page', kwargs={'pk': self.pk})

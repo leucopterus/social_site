@@ -50,7 +50,7 @@ class GroupMember(models.Model):
                              on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'members of group {self.group}'
+        return f'{self.user} is a member of group {self.group}'
 
     class Meta:
         unique_together = ['group', 'user']
@@ -65,7 +65,7 @@ class GroupAdministrator(models.Model):
                              on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'admins of group {self.group}'
+        return f'{self.user} is an admin of group {self.group}'
 
     class Meta:
         unique_together = ['group', 'user']

@@ -30,6 +30,11 @@ class Post(models.Model):
     def get_delete_url(self):
         return reverse('posts:post_delete_page', kwargs={'pk': self.pk})
 
+    def get_group_url(self):
+        if self.group:
+            group_pk = get_object_or_404(Group, self.group)
+        return reverse('groups:group_detail', kwargs={'pk': group_pk})
+
     def __str__(self):
         return f'{self.text[:20]}... {self.author}'
 

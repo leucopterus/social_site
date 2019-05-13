@@ -1,9 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Post
 from .forms import PostForm
+from my_group.models import Group
 # Create your views here.
 
 
@@ -30,15 +31,11 @@ class PostCreateView(LoginRequiredMixin, generic.CreateView):
     fields = ('text',)
     model = Post
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['group_id'] = self.kwargs['group_id']
-        return context
-
     def form_valid(self, form):
         self.object = form.save(commit=False)
+        to_group_by_pk = get_object_or_404(Group, pk=self.kwargs['group_pk'])
         self.object.author = self.request.user.common_user
-        self.object.posts_in_group = self.request.group_id
+        self.object.group = to_group_by_pk
         self.object.save()
         return super().form_valid(form)
 

@@ -18,6 +18,42 @@ class GroupDetailView(DetailView):
     context_object_name = 'group_details'
     model = Group
 
+    def get(self, request, *args, **kwargs):
+        user = request.user.common_user
+        self.kwargs['user'] = user
+        return super().get(self, request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            status = self.kwargs['status']
+        except KeyError:
+            pass
+        else:
+            # print('-'*100)
+            # print(f'status: {status}')
+            # print('-'*100)
+            # print(f'group pk: {self.kwargs["pk"]}')
+            # print('-'*100)
+            # print(f'user: {self.kwargs["user"]}')
+            # print('-'*100)
+            group = Group.objects.get(pk=self.kwargs["pk"])
+            # print(f'group: {group}')
+            # print('-'*100)
+            # print(f'people in group: {group.members.count()}')
+            if status == 'Join':
+                GroupMember.objects.create(
+                    user=self.kwargs["user"], group=group)
+            if status == 'Leave':
+                membership = GroupMember.objects.filter(
+                    user=self.kwargs["user"], group=group)
+                membership.delete()
+            # print('-'*100)
+            # print(f'people in group: {group.members.count()}')
+            # print('-'*100)
+        finally:
+            return context
+
 
 class GroupCreateView(LoginRequiredMixin, CreateView):
     login_url = '/login/'

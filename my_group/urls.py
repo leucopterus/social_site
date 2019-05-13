@@ -9,6 +9,8 @@ urlpatterns = [
          name='group_list'),
     path('<int:pk>/', views.GroupDetailView.as_view(),
          name='group_detail'),
+    path('<int:pk>/status-<str:status>/', views.GroupDetailView.as_view(),
+         name='group_detail'),
     path('create/', views.GroupCreateView.as_view(),
          name='group_create'),
     path('<int:pk>/delete/', views.GroupDeleteView.as_view(),
