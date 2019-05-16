@@ -1,4 +1,5 @@
 {% extends 'base.html'%}
+{% load bootstrap4 %}
 {% block title%}LogIn{% endblock %}
 {% block content %}
 <div class="container">
@@ -7,7 +8,7 @@
         <h2>Please, fill out the next form:</h2>
         <form method="POST">
             {% csrf_token %}
-            {{ form.as_p }}
+            {% bootstrap_form form %}
             <input type="submit" class='btn btn-primary' value="Submit">
         </form>
     </div>

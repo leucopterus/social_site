@@ -1,4 +1,5 @@
 {% extends 'base.html'%}
+{% load bootstrap4 %}
 {% block title%}Registration{% endblock %}
 {% block content %}
 <div class="container">
@@ -10,8 +11,8 @@
             <h2>Please, fill the next form out:</h2>
             <form method="POST", enctype="multipart/form-data">
                 {% csrf_token %}
-                {{form_default_user.as_p}}
-                {{form_common_user.as_p}}
+                {% bootstrap_form form_default_user %}
+                {% bootstrap_form form_common_user %}
                 <input type="submit" class="btn btn-primary" value="Register">
             </form>
         {% endif %}

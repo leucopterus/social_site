@@ -14,6 +14,8 @@ urlpatterns = [
          name='registration_page'),
     path('user/<int:pk>/', views.CommonUserDetailView.as_view(),
          name='user_home_page'),
+    path('user/<int:pk>/status-<str:status>/', views.add_or_remove_friend,
+         name='change_friends'),
     path('user/update/<int:pk>/', views.CommonUserUpdateView.as_view(),
          name='user_update_page'),
     path('user/delete/<int:pk>/', views.CommonUserDeleteView.as_view(),

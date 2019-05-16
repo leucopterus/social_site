@@ -35,6 +35,12 @@ class Post(models.Model):
             group_pk = get_object_or_404(Group, self.group)
         return reverse('groups:group_detail', kwargs={'pk': group_pk})
 
+    @classmethod
+    def get_post_list(cls, post_author_pk):
+        author = CommonUser.objects.get(pk=post_author_pk)
+        list_of_posts = cls.objects.all().filter(author=author)
+        return list_of_posts
+
     def __str__(self):
         return f'{self.text[:20]}... {self.author}'
 

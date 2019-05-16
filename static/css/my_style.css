@@ -1,0 +1,9 @@
+li.nodots {
+    list-style-type: none;
+    margin-left: 3%;
+}
+
+.to-right{
+    box-align: right;
+    margin-left: 16;
+}

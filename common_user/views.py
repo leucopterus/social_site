@@ -9,6 +9,7 @@ from django.views.generic import (View, TemplateView, DetailView,
                                   ListView, UpdateView, DeleteView)
 from django.views.generic.edit import DeletionMixin
 from .models import CommonUser
+from my_post.models import Post
 from .forms import (UserLogInForm, UserRegistrationForm,
                     CommonUserRegistrationForm)
 # Create your views here.
@@ -99,11 +100,18 @@ class CommonUserDetailView(LoginRequiredMixin, DetailView):
     model = CommonUser
     template_name = 'for_users/user_info.html'
 
+    def get(self, request, *args, **kwargs):
+        visitor = request.user.common_user
+        self.kwargs['visitor'] = visitor
+        return super().get(self, request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         # if in url we send pk, so we can grab it by accessing
         # not request.pk but just only pk
         context = super().get_context_data(**kwargs)
+        list_of_posts = Post.get_post_list(self.kwargs['pk'])
         context['pk'] = self.kwargs['pk']
+        context['post_list'] = list_of_posts
         return context
 
 
@@ -123,3 +131,15 @@ class CommonUserDeleteView(LoginRequiredMixin, DeleteView):
         user = User.objects.get(pk=user_pk)
         user.delete()
         return redirect(reverse('for_users:welcome'))
+
+
+@login_required
+def add_or_remove_friend(request, pk, status):
+    if request.user.common_user.pk != pk:
+        if status == 'add':
+            CommonUser.add_friend(request.user.common_user.pk, pk)
+        elif status == 'remove':
+            CommonUser.remove_friend(request.user.common_user.pk, pk)
+
+    return redirect(reverse_lazy('for_users:user_home_page',
+                    kwargs={'pk': pk}))

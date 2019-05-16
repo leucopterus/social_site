@@ -10,19 +10,27 @@
     </button>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            {% if request.user.is_authenticated %}
-                <a class="navbar-brand" href="{% url 'posts:post_list_page' %}">List of posts</a>
+        {% if request.user.is_authenticated %}
+            <ul class="navbar-nav mr-auto">
+                <a class="navbar-brand" href="{% url 'posts:post_list_page' %}">News</a>
                 <a class="navbar-brand" href="{% url 'groups:group_list' %}">Groups</a>
-                <a class="navbar-brand" href="{% url 'for_users:logout_page' %}">Log Out</a>
-            {% else %}
+                <a class="navbar-brand" href="#">Market</a>
+                <a class="navbar-brand" href="#">Forum</a>
+                <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </ul>
+            <a class="navbar-brand" href="{% url 'for_users:logout_page' %}">Log Out</a>
+        {% else %}
+            <ul class="navbar-nav mr-auto">
                 <a class="navbar-brand" href="{% url 'for_users:login_page' %}">Log In</a>
                 <a class="navbar-brand" href="{% url 'for_users:registration_page' %}">Register</a>
-            {% endif %}
-        </ul>
-        <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
+                <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </ul>
+        {% endif %}
     </div>
 </nav>

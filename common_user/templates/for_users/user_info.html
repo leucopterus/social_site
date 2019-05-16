@@ -1,16 +1,33 @@
 {% extends 'base.html' %}
-{% block title%}user info{% endblock %}
+{% load static %}
+{% block title%}{{ common_user_detail.user.first_name }} {{ common_user_detail.user.last_name }}{% endblock %}
 {% block content %}
     <div class="container">
-        <p>Welcome, {{ common_user_detail.user.first_name }} {{ common_user_detail.user.last_name }}</p>
+        <h3>{{ common_user_detail.user.first_name }} {{ common_user_detail.user.last_name }}</h3>
         <div class="jumbotron">
             <p><img src="{{ common_user_detail.profile.url }}" height="300" width="200"></p>
             <p>{{ common_user_detail.about}}</p>
         </div>
         {% if request.user.common_user.pk == pk %}
-            <a href="{% url 'for_users:user_update_page' pk=user.common_user.pk %}" class='btn btn-warning'>Update</a>
-            <a href="{% url 'for_users:user_delete_page' pk=user.common_user.pk %}" class='btn btn-danger'>Delete</a>
+            <a href="{% url 'for_users:user_update_page' pk=user.common_user.pk %}" class='btn btn-sm btn-outline-warning'>Update</a>
+            <a href="{% url 'for_users:user_delete_page' pk=user.common_user.pk %}" class='btn btn-sm btn-outline-danger'>Delete</a>
         {% endif %}
-        <p></p>
+        {% if user.is_authenticated and request.user.common_user.pk != pk %}
+            {% if request.user.common_user not in common_user_detail.friends.all %}
+                <a href="{% url 'for_users:change_friends' pk=pk status='add' %}" class="btn btn-sm btn-outline-primary">Add to friends</a>
+            {% else %}
+                <a href="{% url 'for_users:change_friends' pk=pk status='remove' %}" class="btn btn-sm btn-outline-primary">Remove from friends</a>
+            {% endif %}
+        {% endif %}
+        <p>number of posts: {{ post_list.all.count }}</p>
+        <p>number of friends: {{ common_user_detail.friends.all.count }}</p>
+        <p>number of sent requests: {{ common_user_detail.friend_request_sent.count }}</p>
+        <p>number of received requests: {{ common_user_detail.friend_request_received.all.count }}</p>
+        {% if common_user_detail.friends.all.count %}
+            {% for friend in common_user_detail.friends.all %}
+                <p>Friend: {{ friend.user.common_user }}</p>
+                <p><img src="{{ friend.profile.url }}" height="50" width="50"></p>
+            {% endfor %}
+        {% endif %}
     </div>
 {% endblock %}

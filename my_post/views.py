@@ -33,7 +33,11 @@ class PostCreateView(LoginRequiredMixin, generic.CreateView):
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
-        to_group_by_pk = get_object_or_404(Group, pk=self.kwargs['group_pk'])
+        try:
+            to_group_by_pk = get_object_or_404(Group,
+                                               pk=self.kwargs['group_pk'])
+        except KeyError:
+            to_group_by_pk = None
         self.object.author = self.request.user.common_user
         self.object.group = to_group_by_pk
         self.object.save()
