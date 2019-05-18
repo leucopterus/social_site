@@ -1,6 +1,11 @@
 from django.contrib import admin
+from mediumeditor.admin import MediumEditorAdmin
 from .models import Post
 # Register your models here.
 
 
-admin.site.register(Post)
+@admin.register(Post)
+class PostAdmin(MediumEditorAdmin, admin.ModelAdmin):
+    mediumeditor_fields = ('text', )
+
+# admin.site.register(Post)

@@ -2,7 +2,7 @@
 {% block content %}
     <div class="container">
         <h1>Post #{{ object.pk }}</h1>
-        <p>Text: {{ post_details.text }}</p>
+        <p>{{ post_details.text|safe|linebreaks }}</p>
         <p>Created by: <a href="{% url 'for_users:user_home_page' pk=post_details.author.pk %}">@{{ post_details.author }}</a></p>
         <p>{{ post_details.create_data|date:'d-m-Y' }} {{ post_details.create_data|time:'H:i' }}</p>
         {% if post_details.group %}
@@ -19,12 +19,14 @@
         <div class="container">
             <p>Container for comments</p>
             {% for comment in post_details.comments_to_post.all %}
-                <p>{{ comment.comment_text }}</p>
+                <p>{{ comment.comment_text|safe|linebreaks }}</p>
                 {% if comment.comment_author %}
                     <p>Created by: <a
                             href="{% url 'for_users:user_home_page' pk=comment.comment_author.pk %}">@{{ comment.comment_author }}</a></p>
                 {% endif %}
-                <p>{{ comment.create_data|date:'d-m-Y' }} {{ comment.create_data|time:'H:i' }}</p>
+                <div>
+                    <p>{{ comment.create_data|date:'d-m-Y' }} {{ comment.create_data|time:'H:i' }}</p>
+                </div>
                 {% if request.user.common_user == comment.comment_author %}
                     <a href="{{ comment.get_delete_url }}" class="btn btn-danger">Delete comment</a>
                 {% endif %}
@@ -37,6 +39,7 @@
     <p>post author from object: {{ object.author }}</p>
     <p>post text from object: {{ object.text }}</p>
     <p>post group from object: {{ object.group }}</p>
+    <p>post to_user field: {{ post_details.to_user }}</p>
     <p>number of comments to post from object: {{ object.comments_to_post.all.count }}</p>
     <p>user from request: {{ request.user }}</p>
     <p>common_user from request: {{ request.user.common_user }}</p>

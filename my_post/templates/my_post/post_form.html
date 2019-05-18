@@ -11,12 +11,13 @@
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit" class="save btn btn-success">Save</button>
-            {% if True %}
-                <a href="{{ object.get_group_url }}" class='btn btn-primary'>Go back</a>
+            {% if group_pk %}
+                <a href="{% url 'groups:group_detail' pk=group_pk %}" class='btn btn-primary'>Go back to group</a>
             {% elif form.instance.pk %}
-                <a href="{{ object.get_absolute_url }}" class='btn btn-primary'>Go back</a>
+                <a href="{{ object.get_absolute_url }}" class='btn btn-primary'>Go back to post details</a>
             {% else %}
-                <a href="{% url 'for_users:user_home_page' pk=request.user.common_user.pk %}" class='btn btn-primary'>Go back</a>
+                <a href="{% url 'for_users:user_home_page' pk=request.user.common_user.pk %}" class='btn btn-primary'>Go back to
+                    user</a>
             {% endif %}
         </form>
     </div>
@@ -28,4 +29,5 @@
     <p>group id: {{ group_pk }}</p>
     <p>group id: {{ request.group_pk }}</p>
     <p>group id: {{ object.group_pk }}</p>
+    <script>var editor = new MediumEditor('.editable');</script>
 {% endblock %}

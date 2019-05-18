@@ -35,4 +35,4 @@ class Comment(models.Model):
         return f'{self.comment_text[:10]}'
 
     class Meta:
-        ordering = ['-create_data']
+        ordering = ['create_data']

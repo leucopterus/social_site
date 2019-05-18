@@ -18,6 +18,11 @@ class Post(models.Model):
                               default=None,
                               on_delete=models.CASCADE,
                               related_name='posts_in_group')
+    to_user = models.ForeignKey(CommonUser,
+                                null=True,
+                                default=None,
+                                on_delete=models.CASCADE,
+                                related_name='posts_in_user_page')
     text = models.TextField()
     create_data = models.DateTimeField(default=timezone.now)
 
@@ -32,13 +37,19 @@ class Post(models.Model):
 
     def get_group_url(self):
         if self.group:
-            group_pk = get_object_or_404(Group, self.group)
+            group_pk = get_object_or_404(Group, self.group).pk
         return reverse('groups:group_detail', kwargs={'pk': group_pk})
 
     @classmethod
     def get_post_list(cls, post_author_pk):
         author = CommonUser.objects.get(pk=post_author_pk)
         list_of_posts = cls.objects.all().filter(author=author)
+        return list_of_posts
+
+    @classmethod
+    def get_to_user_post_list(cls, to_user_post_pk):
+        to_user = CommonUser.objects.get(pk=to_user_post_pk)
+        list_of_posts = cls.objects.all().filter(to_user=to_user)
         return list_of_posts
 
     def __str__(self):

@@ -108,8 +108,10 @@ class CommonUserDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         # if in url we send pk, so we can grab it by accessing
         # not request.pk but just only pk
+        # but before that we should make pk accesible:
+        # context['pk'] = self.kwargs.get('pk')
         context = super().get_context_data(**kwargs)
-        list_of_posts = Post.get_post_list(self.kwargs['pk'])
+        list_of_posts = Post.get_to_user_post_list(self.kwargs['pk'])
         context['pk'] = self.kwargs['pk']
         context['post_list'] = list_of_posts
         return context

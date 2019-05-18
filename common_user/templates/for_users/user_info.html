@@ -2,32 +2,110 @@
 {% load static %}
 {% block title%}{{ common_user_detail.user.first_name }} {{ common_user_detail.user.last_name }}{% endblock %}
 {% block content %}
-    <div class="container">
-        <h3>{{ common_user_detail.user.first_name }} {{ common_user_detail.user.last_name }}</h3>
-        <div class="jumbotron">
-            <p><img src="{{ common_user_detail.profile.url }}" height="300" width="200"></p>
-            <p>{{ common_user_detail.about}}</p>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-2">
+                <div class="jumbotron">
+                    <div style="text-align: right">Item A</div>
+                    <div style="text-align: right">Item B</div>
+                    <div style="text-align: right">Item C</div>
+                    <div style="text-align: right">Item D</div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <img src="{{ common_user_detail.profile.url }}" class="img-thumbnail rounded">
+                <div class="centered">
+                    {% if request.user.common_user.pk == pk %}
+                        <a href="{% url 'for_users:user_update_page' pk=user.common_user.pk %}"
+                            class='btn btn-md btn-outline-warning'>Update</a>
+                        <a href="{% url 'for_users:user_delete_page' pk=user.common_user.pk %}"
+                            class='btn btn-md btn-outline-danger'>Delete</a>
+                    {% endif %}
+                    {% if user.is_authenticated and request.user.common_user.pk != pk %}
+                        {% if request.user.common_user not in common_user_detail.friends.all %}
+                        <a href="{% url 'for_users:change_friends' pk=pk status='add' %}" class="btn btn-sm btn-outline-primary">Add to
+                            friends</a>
+                        {% else %}
+                        <a href="{% url 'for_users:change_friends' pk=pk status='remove' %}" class="btn btn-sm btn-outline-primary">Remove from
+                            friends</a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                <p>number of friends: {{ common_user_detail.friends.all.count }}</p>
+                {% if common_user_detail.friends.all.count %}
+                    {% for friend in common_user_detail.friends.all %}
+                        <a href="{{ friend.get_absolute_url }}"><img src="{{ friend.profile.url }}" height="50" width="50"></a>
+                    {% endfor %}
+                {% endif %}
+                <p>number of sent requests: {{ common_user_detail.friend_request_sent.count }}</p>
+                {% if common_user_detail.friend_request_sent.all.count %}
+                    {% for friend in common_user_detail.friend_request_sent.all %}
+                        <a href="{{ friend.get_absolute_url }}"><img src="{{ friend.profile.url }}" height="50" width="50"></a>
+                    {% endfor %}
+                {% endif %}
+                <p>number of received requests: {{ common_user_detail.friend_request_received.all.count }}</p>
+                {% if common_user_detail.friend_request_received.all.count %}
+                    {% for friend in common_user_detail.friend_request_received.all %}
+                        <a href="{{ friend.get_absolute_url }}"><img src="{{ friend.profile.url }}" height="50" width="50"></a>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="col-sm-6">
+                <h3>{{ common_user_detail.user.first_name }} {{ common_user_detail.user.last_name }}</h3>
+                <div class="container">
+                    <h5>About:</h5>
+                    <textarea cols="30" rows="10" disabled>{{ common_user_detail.about}}</textarea>
+                    <h5>Groups:</h5>
+                    <h6>
+                        {% for group in common_user_detail.user_groups.all %}
+                            <a href="{{ group.group.get_detail_url }}">{{group.group}}</a>
+                            {% if group != common_user_detail.user_groups.last %}
+                                ;
+                            {% endif %}
+                        {% endfor %}
+                    </h6>
+                </div>
+                <div class="container">
+                    <h5>Posts:</h5>
+                    {% if request.user.common_user.pk == pk %}
+                        <a href="{% url 'posts:post_create_page' %}" class='btn btn-secondary btn-block'>Create new Post</a>
+                    {% else %}
+                        <a href="{% url 'posts:post_create_page' user_pk=pk %}" class='btn btn-secondary btn-block'>Create new Post</a>
+                    {% endif %}
+                    <div class="container">
+                        {% for post in post_list.all %}
+                            <div class="bordered">
+                                <p>{{ post.text|safe|linebreaks }}</p>
+                                <p>Created by: <a href="{% url 'for_users:user_home_page' pk=post.author.pk %}">@{{ post.author }}</a></p>
+                                <p>{{ post.create_data|date:'d-m-Y' }} {{ post.create_data|time:'H:i' }}</p>
+                                    {% if post.author == request.user.common_user %}
+                                        <a href="{{ post.get_update_url }}" class='btn btn-warning'>Update</a>
+                                        <a href="{{ post.get_delete_url }}" class='btn btn-danger'>Delete</a>
+                                    {% elif request.user.common_user.pk == pk %}
+                                        <a href="{{ post.get_delete_url }}" class='btn btn-danger'>Delete</a>
+                                    {% endif %}
+                                    <a href="{% url 'comments:comment_create' post_pk=post.pk %}" class='btn btn-primary'>Add Comment</a>
+                                    <div class="container">
+                                        {% for comment in post.comments_to_post.all %}
+                                            <div class="bordered">
+                                                {{ comment.comment_text|safe|linebreaks }}
+                                                {% if comment.comment_author %}
+                                                <p>Created by: <a
+                                                        href="{% url 'for_users:user_home_page' pk=comment.comment_author.pk %}">@{{ comment.comment_author }}</a>
+                                                </p>
+                                                {% endif %}
+                                                <p>{{ comment.create_data|date:'d-m-Y' }} {{ comment.create_data|time:'H:i' }}</p>
+                                                {% if request.user.common_user == comment.comment_author or request.user.common_user.pk == pk %}
+                                                    <a href="{{ comment.get_delete_url }}" class="btn btn-danger">Delete comment</a>
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
         </div>
-        {% if request.user.common_user.pk == pk %}
-            <a href="{% url 'for_users:user_update_page' pk=user.common_user.pk %}" class='btn btn-sm btn-outline-warning'>Update</a>
-            <a href="{% url 'for_users:user_delete_page' pk=user.common_user.pk %}" class='btn btn-sm btn-outline-danger'>Delete</a>
-        {% endif %}
-        {% if user.is_authenticated and request.user.common_user.pk != pk %}
-            {% if request.user.common_user not in common_user_detail.friends.all %}
-                <a href="{% url 'for_users:change_friends' pk=pk status='add' %}" class="btn btn-sm btn-outline-primary">Add to friends</a>
-            {% else %}
-                <a href="{% url 'for_users:change_friends' pk=pk status='remove' %}" class="btn btn-sm btn-outline-primary">Remove from friends</a>
-            {% endif %}
-        {% endif %}
-        <p>number of posts: {{ post_list.all.count }}</p>
-        <p>number of friends: {{ common_user_detail.friends.all.count }}</p>
-        <p>number of sent requests: {{ common_user_detail.friend_request_sent.count }}</p>
-        <p>number of received requests: {{ common_user_detail.friend_request_received.all.count }}</p>
-        {% if common_user_detail.friends.all.count %}
-            {% for friend in common_user_detail.friends.all %}
-                <p>Friend: {{ friend.user.common_user }}</p>
-                <p><img src="{{ friend.profile.url }}" height="50" width="50"></p>
-            {% endfor %}
-        {% endif %}
     </div>
 {% endblock %}

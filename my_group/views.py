@@ -81,7 +81,7 @@ class GroupUpdateView(LoginRequiredMixin, UpdateView):
     model = Group
 
     def get_success_url(self):
-        return reverse('groups:group_detail', kwargs={'pk': self.pk})
+        return reverse('groups:group_detail', kwargs={'pk': self.kwargs['pk']})
 
 
 class GroupDeleteView(LoginRequiredMixin, DeleteView):

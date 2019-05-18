@@ -9,6 +9,8 @@ urlpatterns = [
           name='post_create_page'),
      path('create/gr-<int:group_pk>/', views.PostCreateView.as_view(),
           name='post_create_page'),
+     path('create/to_user-<int:user_pk>/', views.PostCreateView.as_view(),
+          name='post_create_page'),
      path('detail/<int:pk>/', views.PostDetailView.as_view(),
           name='post_detail_page'),
      path('list/', views.PostListView.as_view(),
