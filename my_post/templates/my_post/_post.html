@@ -1,0 +1,18 @@
+<div class="bordered">
+    <p>{{ post.text|safe|linebreaks }}</p>
+    <p>Created by: <a href="{% url 'for_users:user_home_page' pk=post.author.pk %}">@{{ post.author }}</a></p>
+    <p>{{ post.create_data|date:'d-m-Y' }} {{ post.create_data|time:'H:i' }}</p>
+    {% if post.author == request.user.common_user %}
+        <a href="{{ post.get_update_url }}" class='btn btn-warning'>Update</a>
+        <a href="{{ post.get_delete_url }}" class='btn btn-danger'>Delete</a>
+    {% elif request.user.common_user.pk == post.to_user.pk %}
+        <a href="{{ post.get_delete_url }}" class='btn btn-danger'>Delete</a>
+    {% endif %}
+    <a href="{{ post.get_absolute_url }}" class='btn btn-secondary'>Details</a>
+    <a href="{% url 'comments:comment_create' post_pk=post.pk %}" class='btn btn-primary'>Add Comment</a>
+    <div class="container">
+        {% for comment in post.comments_to_post.all %}
+            {% include 'my_comment/_comment.html' %}
+        {% endfor %}
+    </div>
+</div>

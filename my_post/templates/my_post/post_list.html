@@ -4,12 +4,20 @@
         <div class="jumbotron">
             <a href="{% url 'posts:post_create_page' %}" class='btn btn-success btn-block'>Create new Post</a>
             {% for post in post_list %}
-                <div class="bordered">
+                <!-- <div class="bordered">
                     {{ post.text|safe|linebreaks }}
                     <p>comments: {{ post.comments_to_post.all.count }}</p>
                     <a href="{{ post.get_absolute_url }}" class='btn btn-primary'>Details</a>
-                </div>
+                </div> -->
+                {% include 'my_post/_post.html' %}
             {% endfor %}
+            {% if page_obj.has_previous %}
+                <span><a href="?page={{ page_obj.previous_page_number }}">Previous</a></span>
+            {% endif %}
+            <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</span>
+            {% if page_obj.has_next %}
+                <span><a href="?page={{ page_obj.next_page_number }}">Next</a></span>
+            {% endif %}
         </div>
     </div>
     <div class="container">

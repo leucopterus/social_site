@@ -1,5 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse, reverse_lazy
+from django.core.paginator import (Paginator, EmptyPage,
+                                   PageNotAnInteger)
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Post
@@ -12,14 +14,36 @@ from my_group.models import Group
 class PostListView(LoginRequiredMixin, generic.ListView):
     login_url = '/login/'
     model = Post
+    paginate_by = 10
 
     def get_queryset(self):
-        related_user_id = self.request.user.common_user.id
-        queryset = super().get_queryset()
+        common_user_id = self.request.user.common_user.id
+        # queryset = super().get_queryset()
         # to show post only to their owner
         # queryset = queryset.filter(author__id=related_user_id)
         # queryset.filter(author__user__common_user__id=related_user_id)
-        return queryset
+        list_of_users_id = CommonUser.people_connected_ids(common_user_id)
+        author_qs = Post.objects.filter(author__id__in=list_of_users_id)
+        to_user_qs = Post.objects.filter(to_user__id=common_user_id)
+        list_of_user_groups = CommonUser.groups_connected_ids(
+            common_user_id)
+        group_qs = Post.objects.filter(group__in=list_of_user_groups)
+        queryset = author_qs.union(to_user_qs, group_qs)
+        return queryset.order_by('-create_data')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        list_of_posts = self.get_queryset()
+        paginator = Paginator(list_of_posts, self.paginate_by)
+        page = self.request.GET.get('page')
+        try:
+            post_per_page = paginator.page(page)
+        except PageNotAnInteger:
+            post_per_page = paginator.page(1)
+        except EmptyPage:
+            post_per_page = paginator.page(paginator.num_pages)
+        context['post_list'] = post_per_page
+        return context
 
 
 class PostDetailView(generic.DetailView):

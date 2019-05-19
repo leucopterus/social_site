@@ -55,5 +55,7 @@ class Post(models.Model):
     def __str__(self):
         return f'{self.text[:20]}... {self.author}'
 
-    class Meta:
-        ordering = ['-create_data']
+    # we have to comment ordering to make queryset's union
+    # function work properly
+    # class Meta:
+    #     ordering = ['-create_data']

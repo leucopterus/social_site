@@ -49,15 +49,40 @@ class CommonUser(models.Model):
 
     @classmethod
     def get_friends_list(cls, commonuser_id):
-        return cls.objects.get(pk=commonuser_id).friends.all()
+        return cls.objects.get(pk=commonuser_id).friends.all().order_by('?')
 
     @classmethod
     def get_friend_sent_list(cls, commonuser_id):
-        return cls.objects.get(pk=commonuser_id).friend_request_sent.all()
+        return cls.objects.get(pk=commonuser_id).friend_request_sent.all().order_by('?')
 
     @classmethod
     def get_friend_received_list(cls, commonuser_id):
-        return cls.objects.get(pk=commonuser_id).friend_request_received.all()
+        return cls.objects.get(pk=commonuser_id).friend_request_received.all().order_by('?')
+
+    @classmethod
+    def people_connected_ids(cls, user_id) -> list:
+        ''' this method returns user, his friends,
+        and sent request to friends ids in list output '''
+        list_of_ids = []
+        list_of_ids.append(user_id)
+        user = cls.objects.get(id=user_id)
+        friends_qs = user.friends.all()
+        friend_request_sent_qs = user.friend_request_sent.all()
+        for friend in friends_qs:
+            list_of_ids.append(friend.id)
+        for friend in friend_request_sent_qs:
+            list_of_ids.append(friend.id)
+        return list_of_ids
+
+    @classmethod
+    def groups_connected_ids(cls, user_id) -> list:
+        ''' this method returns list of user groups' id '''
+        list_of_groups = []
+        user = cls.objects.get(id=user_id)
+        groups_qs = user.user_groups.all()
+        for group in groups_qs:
+            list_of_groups.append(group.group)
+        return list_of_groups
 
     def __str__(self):
         return f'{self.user.first_name} {self.user.last_name}'

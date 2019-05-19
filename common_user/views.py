@@ -19,15 +19,16 @@ def welcome_page(request):
     if request.user.is_authenticated:
         return redirect(reverse('for_users:user_home_page',
                                 kwargs={'pk': request.user.common_user.pk}))
-
     context = {}
     return render(request, 'welcome_page.html', context)
 
 
 @login_required
 def page_for_log_out(request):
+    thanks = f'Thank you, {request.user.common_user}, for visiting us! See you next time!'
     logout(request)
-    return HttpResponseRedirect(reverse('for_users:login_page'))
+    context = {'thanks': thanks}
+    return render(request, 'welcome_page.html', context)
 
 
 def page_for_log_in(request):
@@ -111,9 +112,25 @@ class CommonUserDetailView(LoginRequiredMixin, DetailView):
         # but before that we should make pk accesible:
         # context['pk'] = self.kwargs.get('pk')
         context = super().get_context_data(**kwargs)
+        common_user_id = self.kwargs['pk']
+        context['post_list'] = None
+        context['friends'] = None
+        context['friends_sent'] = None
+        context['friends_received'] = None
+        friends_qs = CommonUser.get_friends_list(common_user_id)
+        friend_request_sent_qs = CommonUser.get_friend_sent_list(common_user_id)
+        friend_request_received_qs = CommonUser.get_friend_received_list(
+            common_user_id)
         list_of_posts = Post.get_to_user_post_list(self.kwargs['pk'])
         context['pk'] = self.kwargs['pk']
-        context['post_list'] = list_of_posts
+        if list_of_posts:
+            context['post_list'] = list_of_posts
+        if friends_qs:
+            context['friends'] = friends_qs
+        if friend_request_sent_qs:
+            context['friends_sent'] = friend_request_sent_qs
+        if friend_request_received_qs:
+            context['friends_received'] = friend_request_received_qs
         return context
 
 
