@@ -49,8 +49,14 @@ class Post(models.Model):
     @classmethod
     def get_to_user_post_list(cls, to_user_post_pk):
         to_user = CommonUser.objects.get(pk=to_user_post_pk)
-        list_of_posts = cls.objects.all().filter(to_user=to_user)
+        list_of_posts = cls.objects.all().filter(
+            to_user=to_user).order_by('-create_data')
         return list_of_posts
+
+    @classmethod
+    def get_group_post_list(cls, group_id):
+        group = Group.objects.get(id=group_id)
+        return cls.objects.filter(group=group).order_by('-create_data')
 
     def __str__(self):
         return f'{self.text[:20]}... {self.author}'

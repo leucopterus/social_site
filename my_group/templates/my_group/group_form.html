@@ -15,10 +15,12 @@
                 <a href="{{ form.instance.get_detail_url }}" class="save btn btn-primary">Go back</a>
             {% else %}
                 <button type="submit" class="save btn btn-success">Create</button>
+                <a href="{% url 'groups:group_list' %}" class="save btn btn-primary">Return</a>
             {% endif %}
         </form>
     </div>
     <p>group pk from object: {{ object.pk }}</p>
     <p>user from request: {{ request.user }}</p>
     <p>common_user from request: {{ request.user.common_user }}</p>
+    <script>var editor = new MediumEditor('.editable');</script>
 {% endblock %}

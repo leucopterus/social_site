@@ -1,15 +1,37 @@
 {% extends 'base.html' %}
 {% block content %}
     <div class="container">
+        <br>
+        <a href="{% url 'groups:group_create' %}" class='btn btn-success btn-block'>Create new Group</a>
         {% for group in group_list %}
-            <p>{{ group.name }}</p>
-            <p>users in group: {{ group.members.all.count }}</p>
-            <a href="{{ group.get_detail_url }}" class='btn btn-primary'>Details</a>
+            <div class="bordered">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <a href="{{ group.get_detail_url }}">
+                            <img src="{{ group.logo.url }}" alt="group_logo" height='30' wigth='20' class="img-thumbnail rounded">
+                        </a>
+                    </div>
+                    <div class="col-sm-8">
+                        <h3>{{ group.name }}</h3>
+                        <p>{{ group.members.all.count }} users and {{ group.posts_in_group.all.count }} posts in group</p>
+                        {% if user.common_user in group.members.all %}
+                            <p>You are a member</p>
+                        {% else %}
+                            <p>You are not a member</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
         {% endfor %}
+        {% if page_obj.has_previous %}
+            <span><a href="?page={{ page_obj.previous_page_number }}">Previous</a></span>
+        {% endif %}
+        <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</span>
+        {% if page_obj.has_next %}
+            <span><a href="?page={{ page_obj.next_page_number }}">Next</a></span>
+        {% endif %}
     </div>
     <div class="container">
-        <br>
-        <a href="{% url 'groups:group_create' %}" class='btn btn-success'>Create new Group</a>
         <p>User id {{ request.user.common_user.id }}</p>
     </div>
 {% endblock %}

@@ -100,6 +100,7 @@ class CommonUserDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'common_user_detail'
     model = CommonUser
     template_name = 'for_users/user_info.html'
+    paginate_by = 10
 
     def get(self, request, *args, **kwargs):
         visitor = request.user.common_user

@@ -1,15 +1,34 @@
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
+from django.core.paginator import (Paginator, PageNotAnInteger,
+                                   EmptyPage)
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import (ListView, DetailView,
                                   CreateView, UpdateView,
                                   DeleteView)
 from .models import Group, GroupMember, GroupAdministrator
+from .forms import GroupForm
+from my_post.models import Post
 # Create your views here.
 
 
 class GroupListView(ListView):
     model = Group
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        list_of_groups = Group.get_all_groups()
+        paginator = Paginator(list_of_groups, self.paginate_by)
+        page = self.request.GET.get('page')
+        try:
+            groups_per_page = paginator.page(page)
+        except PageNotAnInteger:
+            groups_per_page = paginator.page(1)
+        except EmptyPage:
+            groups_per_page = paginator.page(paginator.num_pages)
+        context['group_list'] = groups_per_page
+        return context
 
 
 class GroupDetailView(DetailView):
@@ -25,6 +44,8 @@ class GroupDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['posts_in_group'] = Post.get_group_post_list(
+                                                self.kwargs.get('pk'))
         try:
             status = self.kwargs['status']
         except KeyError:
@@ -57,7 +78,8 @@ class GroupDetailView(DetailView):
 
 class GroupCreateView(LoginRequiredMixin, CreateView):
     login_url = '/login/'
-    fields = ('name', 'description', 'logo')
+    # fields = ('name', 'description', 'logo')
+    form_class = GroupForm
     model = Group
 
     def form_valid(self, form):
@@ -77,7 +99,8 @@ class GroupCreateView(LoginRequiredMixin, CreateView):
 
 class GroupUpdateView(LoginRequiredMixin, UpdateView):
     login = '/login/'
-    fields = ('name', 'description', 'logo')
+    # fields = ('name', 'description', 'logo')
+    form_class = GroupForm
     model = Group
 
     def get_success_url(self):

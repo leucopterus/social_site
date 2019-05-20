@@ -15,6 +15,9 @@
                 <a href="{% url 'groups:group_detail' pk=group_pk %}" class='btn btn-primary'>Go back to group</a>
             {% elif form.instance.pk %}
                 <a href="{{ object.get_absolute_url }}" class='btn btn-primary'>Go back to post details</a>
+            {% elif user_pk %}
+                <a href="{% url 'for_users:user_home_page' pk=user_pk %}" class='btn btn-primary'>Go back to
+                    user</a>
             {% else %}
                 <a href="{% url 'for_users:user_home_page' pk=request.user.common_user.pk %}" class='btn btn-primary'>Go back to
                     user</a>

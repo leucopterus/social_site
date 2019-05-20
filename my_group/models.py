@@ -27,6 +27,10 @@ class Group(models.Model):
     class Meta:
         ordering = ['-create_data']
 
+    @classmethod
+    def get_all_groups(cls):
+        return cls.objects.all()
+
     def get_absolute_url(self):
         return reverse('groups:group_list')
 

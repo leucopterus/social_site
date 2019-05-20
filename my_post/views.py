@@ -16,7 +16,7 @@ class PostListView(LoginRequiredMixin, generic.ListView):
     model = Post
     paginate_by = 10
 
-    def get_queryset(self):
+    def get_queryset_my(self):
         common_user_id = self.request.user.common_user.id
         # queryset = super().get_queryset()
         # to show post only to their owner
@@ -33,7 +33,7 @@ class PostListView(LoginRequiredMixin, generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        list_of_posts = self.get_queryset()
+        list_of_posts = self.get_queryset_my()
         paginator = Paginator(list_of_posts, self.paginate_by)
         page = self.request.GET.get('page')
         try:
