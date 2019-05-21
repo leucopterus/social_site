@@ -1,8 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
+from django.shortcuts import get_object_or_404
 from django.core.paginator import (Paginator, PageNotAnInteger,
                                    EmptyPage)
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 from django.views.generic import (ListView, DetailView,
                                   CreateView, UpdateView,
                                   DeleteView)
@@ -51,17 +53,7 @@ class GroupDetailView(DetailView):
         except KeyError:
             pass
         else:
-            # print('-'*100)
-            # print(f'status: {status}')
-            # print('-'*100)
-            # print(f'group pk: {self.kwargs["pk"]}')
-            # print('-'*100)
-            # print(f'user: {self.kwargs["user"]}')
-            # print('-'*100)
             group = Group.objects.get(pk=self.kwargs["pk"])
-            # print(f'group: {group}')
-            # print('-'*100)
-            # print(f'people in group: {group.members.count()}')
             if status == 'Join':
                 GroupMember.objects.create(
                     user=self.kwargs["user"], group=group)
@@ -69,9 +61,6 @@ class GroupDetailView(DetailView):
                 membership = GroupMember.objects.filter(
                     user=self.kwargs["user"], group=group)
                 membership.delete()
-            # print('-'*100)
-            # print(f'people in group: {group.members.count()}')
-            # print('-'*100)
         finally:
             return context
 
@@ -113,3 +102,20 @@ class GroupDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_success_url(self):
         return reverse_lazy('groups:group_list')
+
+
+@login_required
+def members(request, pk, people, user_pk=None, status=None):
+    group = get_object_or_404(Group, pk=pk)
+    if user_pk:
+        if status == 'remove_from_users':
+            group.remove_from_members(user_pk)
+        elif status == 'add_to_admins':
+            group.add_to_admins(user_pk)
+        elif status == 'remove_from_admins':
+            group.remove_from_admins(user_pk)
+    context = {
+        'people': people,
+        'group_details': group,
+    }
+    return render(request, 'my_group/people_edit.html', context)

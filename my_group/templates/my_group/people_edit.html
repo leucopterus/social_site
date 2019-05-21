@@ -1,0 +1,28 @@
+{% extends 'group_base.html' %}
+{% block content_part %}
+    {% csrf_token %}
+    {% if people == 'members' %}
+        <h3>List of users in group:</h3>
+        {% if group_details.members.count > 1 %}
+            {% for member in group_details.members.all %}
+                {% include 'my_group/_group_member.html' with people=people %}
+            {% endfor %}
+        {% else %}
+            <p>No users there</p>
+        {% endif %}
+    {% elif people == 'admins' %}
+        <h3>List of administrators in group:</h3>
+        {% if group_details.admins.count > 1 %}
+            {% for member in group_details.admins.all %}
+                {% if member != group_details.creator %}
+                    {% include 'my_group/_group_member.html' with people=people %}
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <p>No admins there</p>
+        {% endif %}
+    {% endif %}
+    <a href="{{ group_details.get_detail_url }}" class='btn btn-secondary'>Return</a>
+{% endblock %}
+{% block group_details %}
+{% endblock %}

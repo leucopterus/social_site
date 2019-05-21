@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-1">
+        </div>
+        <div class="col-sm-8">
+            <h1>{{ group_details.name }}</h1>
+            <div class="bordered">
+                {{ group_details.description|safe|linebreaks }}
+            </div>
+            {% block content_part %}
+            {% endblock %}
+        </div>
+        <div class="col-sm-3">
+            <img src="{{ group_details.logo.url }}" alt="group-logo" height="300" width="200"
+                class="img-thumbnail rounded">
+            {% block group_details %}
+            {% endblock %}
+        </div>
+    </div>
+</div>
+<p>common user: {{ user.common_user }}</p>
+<p>common user from request: {{ request.user.common_user }}</p>
+<p>group: {{ group_details.name }}</p>
+{% endblock %}

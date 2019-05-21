@@ -31,6 +31,21 @@ class Group(models.Model):
     def get_all_groups(cls):
         return cls.objects.all()
 
+    def add_to_admins(self, user_pk):
+        common_user = CommonUser.objects.get(pk=user_pk)
+        self.admins.add(common_user)
+        self.save()
+
+    def remove_from_admins(self, user_pk):
+        common_user = CommonUser.objects.get(pk=user_pk)
+        self.admins.remove(common_user)
+        self.save()
+
+    def remove_from_members(self, user_pk):
+        common_user = CommonUser.objects.get(pk=user_pk)
+        self.members.remove(common_user)
+        self.save()
+
     def get_absolute_url(self):
         return reverse('groups:group_list')
 

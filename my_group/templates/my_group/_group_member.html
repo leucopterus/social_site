@@ -1,0 +1,38 @@
+{% if member != group_details.creator %}
+    <div class="bordered">
+        <div class="row">
+            <div class="col-sm-4">
+                <h3>
+                    <img src="{{ member.profile.url }}" height="60" width="40" class="img-thumbnail rounded">
+                    {{ member }}
+                </h3>
+            </div>
+            <div class="col-sm-2">
+                {% if member in group_details.admins.all %}
+                    <h4>admin</h4>
+                {% elif member in group_details.members.all %}
+                    <h4>user</h4>
+                {% endif %}
+            </div>
+            {% if people == 'members' and request.user.common_user in group_details.admins.all %}
+                <div class="col-sm-3">
+                    {% if member not in group_details.admins.all %}
+                        <a href="{% url 'groups:group_people' pk=group_details.pk people=people user_pk=member.pk status='add_to_admins' %}"
+                            class="btn btn-primary">add to admins</a>
+                    {% endif %}
+                </div>
+                <div class="col-sm-3">
+                    <a href="{% url 'groups:group_people' pk=group_details.pk people=people user_pk=member.pk status='remove_from_users' %}"
+                        class="btn btn-danger">remove from members</a>
+                </div>
+            {% elif people == 'admins' and request.user.common_user in group_details.admins.all %}
+                <div class="col-sm-3">
+                    <a href="{% url 'groups:group_people' pk=group_details.pk people=people user_pk=member.pk status='remove_from_admins' %}"
+                        class="btn btn-danger">remove from admins</a>
+                </div>
+                <div class="col-sm-3">
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}
