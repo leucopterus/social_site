@@ -24,8 +24,8 @@ class Group(models.Model):
                              verbose_name='group_logo')
     create_data = models.DateTimeField(default=timezone.now)
 
-    class Meta:
-        ordering = ['-create_data']
+    # class Meta:
+    #     ordering = ['-create_data']
 
     @classmethod
     def get_all_groups(cls):

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h4>results for: "{{ q }}"</h4>
+    {% if users %}
+        <h5>Users: </h5>
+        {% for user in users.all %}
+            <div class="bordered">
+                <a href="{{ user.get_absolute_url }}">
+                    <img src="{{ user.profile.url }}" height="60" width="40" class="img-thumbnail rounded">
+                    {{ user }}
+                </a>
+                {% if user.about %}
+                    <p>about: {{ user.about|safe|slice:20 }}{% if user.about|length > 20 %}...{% endif %}</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% if posts %}
+        <h5>Posts: </h5>
+        {% for post in posts.all %}
+            {% include 'my_post/_post.html' with nocomment='True' %}
+        {% endfor %}
+    {% endif %}
+    {% if groups %}
+        <h5>Groups: </h5>
+        {% for group in groups.all %}
+            <div class="bordered">
+                <a href="{{ group.get_detail_url }}">
+                    <img src="{{ group.logo.url }}" height="60" width="40" class="img-thumbnail rounded">
+                    {{ group.name }}
+                </a>
+                {% if group.description %}
+                    <p>description: {{ group.description|safe|slice:20 }}{% if group.description|length > 20 %}...{% endif %}</p>
+                {% endif %}
+                <p>membrs: {{ group.members.count }}</p>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}

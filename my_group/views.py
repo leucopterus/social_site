@@ -17,6 +17,7 @@ from my_post.models import Post
 class GroupListView(ListView):
     model = Group
     paginate_by = 10
+    ordering = ('-create_data')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

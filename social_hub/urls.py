@@ -21,12 +21,14 @@ from django.urls import path, include
 from django.conf.urls.static import static
 # everything that is defined in setting.py file
 from django.conf import settings
+from .views import search_view
 
 urlpatterns = [
     path('', include('common_user.urls', namespace='for_users')),
     path('post/', include('my_post.urls', namespace='posts')),
     path('comment/', include('my_comment.urls', namespace='comments')),
     path('group/', include('my_group.urls', namespace='groups')),
+    path('results/', search_view, name='search'),
     path('admin/', admin.site.urls),
 ]
 # this line is written to display media files:
